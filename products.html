@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" class="min-h-screen">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MENS COLLECTION | Bines & Chalk</title>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-black': '#0a0a0a',
+                        'brand-bone': '#ecebe6',
+                        'brand-gray': '#f4f4f4',
+                        'brand-red': '#cc0000',
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CORE */
+        *, *::before, *::after {
+            cursor: none !important;
+        }
+        body {
+            background-color: #ffffff;
+            color: #0a0a0a;
+            overflow-x: hidden;
+        }
+
+        /* CUSTOM CURSOR - BULLET */
+        #cursor-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            z-index: 99999;
+            will-change: transform;
+        }
+        #cursor {
+            position: absolute;
+            width: 30px;
+            height: 12px;
+            background: linear-gradient(90deg, #cc0000 0%, #cc0000 60%, #d4a574 60%, #d4a574 100%);
+            border-radius: 6px 3px 3px 6px;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.4);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        #cursor::before {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 8px;
+            background: #b8956e;
+            border-radius: 0 2px 2px 0;
+        }
+        #cursor.visible {
+            opacity: 1;
+        }
+        #cursor.hovered {
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        /* UTILS */
+        .reveal-wrapper { position: relative; overflow: hidden; background: #f0f0f0; }
+        .reveal-img { width: 100%; height: 100%; object-fit: cover; opacity: 1; transform: scale(1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* CAROUSEL */
+        .carousel-track { display: flex; gap: 1px; cursor: grab; }
+        .carousel-track:active { cursor: grabbing; }
+
+        /* PRODUCT CARD SPECIFICS */
+        .product-tag {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            padding: 4px 8px; border: 1px solid #000; background: #fff; color: #000;
+        }
+        .wishlist-icon {
+            width: 32px; height: 32px; border-radius: 50%; border: 1px solid #000;
+            display: flex; align-items: center; justify-content: center; background: #fff;
+            transition: background 0.2s, color 0.2s;
+        }
+        .wishlist-icon:hover { background: #000; color: #fff; }
+
+        /* ANIMATION UTILS */
+        .char-wrap { overflow: hidden; display: inline-block; vertical-align: top; }
+        .char { display: inline-block; transform: translateY(0); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- CUSTOM CURSOR -->
+    <div id="cursor-wrapper">
+        <div id="cursor"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-6 text-black transition-all duration-300" id="nav">
+        <div class="relative group">
+            <div class="hover-trigger uppercase font-bold tracking-[0.2em] text-xs cursor-pointer">Menu</div>
+            <div class="absolute left-0 top-full mt-4 bg-brand-black border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[200px] z-50 mix-blend-normal">
+                <a href="index.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Home</a>
+                <a href="products.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Store</a>
+                <a href="contact.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Contact</a>
+            </div>
+        </div>
+        <a href="index.html" class="hover-trigger font-display text-2xl font-bold uppercase tracking-tighter cursor-pointer">Bines & Chalk</a>
+        <div class="hover-trigger uppercase font-bold tracking-[0.2em] text-xs cursor-pointer">Cart (0)</div>
+    </nav>
+
+    <main class="flex-grow">
+
+        <!-- 1. HERO SECTION -->
+        <section class="relative h-[90vh] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="store-hero.png" class="w-full h-full object-cover object-top reveal-img" alt="Store Hero">
+                <div class="absolute inset-0 bg-black/10"></div>
+            </div>
+            <div class="relative z-10 w-full px-6 md:px-12 flex flex-col justify-end h-full pb-24 text-white">
+                <h1 class="font-display text-[10vw] leading-[0.85] uppercase font-bold tracking-tight mb-6 split-text">
+                    All Men's
+                </h1>
+                <p class="font-sans text-lg max-w-xl opacity-0 fade-in leading-relaxed">
+                    Explore our complete range of menswear. Whether you're looking for the latest custom styles or classic best-selling designs, we've got you covered.
+                </p>
+                <div class="mt-8 opacity-0 fade-in">
+                    <button class="bg-white text-black px-10 py-4 uppercase font-bold tracking-widest text-xs hover:bg-black hover:text-white transition-colors duration-300 hover-trigger">
+                        Shop All
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. RANGES (Grey Box Style) -->
+        <section class="py-24 bg-brand-gray">
+            <h2 class="font-display text-4xl font-bold uppercase mb-12 text-center tracking-tight px-4">Bines & Chalk Ranges</h2>
+            <div class="flex md:grid md:grid-cols-3 gap-6 max-w-[1600px] mx-auto overflow-x-auto no-scrollbar px-4 md:px-4">
+
+                <!-- Range 1 - Hoodies -->
+                <div class="group cursor-pointer hover-trigger flex-shrink-0 w-[75vw] md:w-auto">
+                    <div class="reveal-wrapper aspect-[3/4]">
+                        <img src="jumperr.png" class="reveal-img group-hover:scale-110 transition-transform duration-700" alt="Hoodies">
+                    </div>
+                    <div class="bg-[#e5e5e5] p-6 flex justify-between items-center group-hover:bg-[#d5d5d5] transition-colors">
+                        <span class="font-display text-lg font-bold uppercase tracking-wide">Hoodies</span>
+                        <span class="text-xl font-bold">></span>
+                    </div>
+                </div>
+
+                <!-- Range 2 - Glasses -->
+                <div class="group cursor-pointer hover-trigger flex-shrink-0 w-[75vw] md:w-auto">
+                    <div class="reveal-wrapper aspect-[3/4]">
+                        <img src="glasses.png" class="reveal-img group-hover:scale-110 transition-transform duration-700" alt="Glasses">
+                    </div>
+                    <div class="bg-[#e5e5e5] p-6 flex justify-between items-center group-hover:bg-[#d5d5d5] transition-colors">
+                        <span class="font-display text-lg font-bold uppercase tracking-wide">Glasses</span>
+                        <span class="text-xl font-bold">></span>
+                    </div>
+                </div>
+
+                <!-- Range 3 - Tee's -->
+                <div class="group cursor-pointer hover-trigger flex-shrink-0 w-[75vw] md:w-auto">
+                    <div class="reveal-wrapper aspect-[3/4]">
+                        <img src="T's.png" class="reveal-img group-hover:scale-110 transition-transform duration-700" alt="Tee's">
+                    </div>
+                    <div class="bg-[#e5e5e5] p-6 flex justify-between items-center group-hover:bg-[#d5d5d5] transition-colors">
+                        <span class="font-display text-lg font-bold uppercase tracking-wide">Tee's</span>
+                        <span class="text-xl font-bold">></span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. VINTAGE STYLE -->
+        <section class="py-20 bg-white border-b border-gray-200">
+            <div class="px-6 flex justify-between items-center mb-10 max-w-[1800px] mx-auto w-full">
+                <h2 class="font-display text-3xl font-bold uppercase tracking-wide">Vintage Style</h2>
+                <a href="#" class="text-xs font-bold uppercase border-b border-black hover:text-brand-red transition-colors">Shop All -></a>
+            </div>
+
+            <div class="pl-6 overflow-x-auto no-scrollbar">
+                <div class="carousel-track w-max pr-12 gap-4">
+
+                    <!-- Product Card 1 - Shower Tee -->
+                    <div class="w-[340px] group flex-shrink-0 cursor-pointer hover-trigger border border-gray-200 p-4 relative">
+                        <div class="absolute top-6 left-6 z-10 flex gap-2">
+                            <span class="product-tag">New</span>
+                        </div>
+                        <div class="absolute top-6 right-6 z-10 wishlist-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        </div>
+                        <div class="relative aspect-square mb-4 overflow-hidden bg-gray-100">
+                            <img src="Bines_and_Chalk_T_Shirt_Back_View.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Shower Tee">
+                        </div>
+
+                        <h3 class="font-display text-sm font-bold uppercase tracking-wide mb-1">Shower Tee</h3>
+
+                        <div class="flex justify-between items-end mt-4 border-t border-gray-100 pt-3">
+                            <div class="flex items-center gap-2 font-sans text-sm">
+                                <span class="text-brand-black font-bold">£45</span>
+                            </div>
+                            <button class="text-[10px] font-bold uppercase tracking-widest border-b border-black pb-0.5 hover:text-brand-red hover:border-brand-red transition-colors">+ Add</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 6 - Shower Hoodie -->
+                    <div class="w-[340px] group flex-shrink-0 cursor-pointer hover-trigger border border-gray-200 p-4 relative">
+                        <div class="absolute top-6 left-6 z-10 flex gap-2">
+                            <span class="product-tag">New</span>
+                        </div>
+                        <div class="absolute top-6 right-6 z-10 wishlist-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        </div>
+                        <div class="relative aspect-square mb-4 overflow-hidden bg-gray-100">
+                            <img src="Bines_and_Chalk_Hoodie_Front_View.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Shower Hoodie">
+                        </div>
+
+                        <h3 class="font-display text-sm font-bold uppercase tracking-wide mb-1">Shower Hoodie</h3>
+
+                        <div class="flex justify-between items-end mt-4 border-t border-gray-100 pt-3">
+                            <div class="flex items-center gap-2 font-sans text-sm">
+                                <span class="text-brand-black font-bold">£95</span>
+                            </div>
+                            <button class="text-[10px] font-bold uppercase tracking-widest border-b border-black pb-0.5 hover:text-brand-red hover:border-brand-red transition-colors">+ Add</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 - Classic Tee -->
+                    <div class="w-[340px] group flex-shrink-0 cursor-pointer hover-trigger border border-gray-200 p-4 relative">
+                        <div class="absolute top-6 left-6 z-10 flex gap-2">
+                            <span class="product-tag">New</span>
+                        </div>
+                        <div class="absolute top-6 right-6 z-10 wishlist-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        </div>
+                        <div class="relative aspect-square mb-4 overflow-hidden bg-gray-100">
+                            <img src="Bines_and_Chalk_T_Shirt_Front_View.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Classic Tee">
+                        </div>
+
+                        <h3 class="font-display text-sm font-bold uppercase tracking-wide mb-1">Classic Tee</h3>
+
+                        <div class="flex justify-between items-end mt-4 border-t border-gray-100 pt-3">
+                            <div class="flex items-center gap-2 font-sans text-sm">
+                                <span class="text-brand-black font-bold">£45</span>
+                            </div>
+                            <button class="text-[10px] font-bold uppercase tracking-widest border-b border-black pb-0.5 hover:text-brand-red hover:border-brand-red transition-colors">+ Add</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 5 - Slew Dem Hoodie -->
+                    <div class="w-[340px] group flex-shrink-0 cursor-pointer hover-trigger border border-gray-200 p-4 relative">
+                        <div class="absolute top-6 left-6 z-10 flex gap-2">
+                            <span class="product-tag">New</span>
+                        </div>
+                        <div class="absolute top-6 right-6 z-10 wishlist-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        </div>
+                        <div class="relative aspect-square mb-4 overflow-hidden bg-gray-100">
+                            <img src="Bines_and_Chalk_Hoodie_Back_View.png" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Slew Dem Hoodie">
+                        </div>
+
+                        <h3 class="font-display text-sm font-bold uppercase tracking-wide mb-1">Slew Dem Hoodie</h3>
+
+                        <div class="flex justify-between items-end mt-4 border-t border-gray-100 pt-3">
+                            <div class="flex items-center gap-2 font-sans text-sm">
+                                <span class="text-brand-black font-bold">£95</span>
+                            </div>
+                            <button class="text-[10px] font-bold uppercase tracking-widest border-b border-black pb-0.5 hover:text-brand-red hover:border-brand-red transition-colors">+ Add</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        
+        
+        
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-black text-brand-bone py-16 text-center">
+        <div class="font-display text-4xl font-bold uppercase tracking-tighter mb-4">Bines & Chalk</div>
+        <div class="text-xs uppercase tracking-[0.5em] text-gray-500">
+            © 2025 Bines & Chalk
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
+
+    <script>
+        // 1. HELPERS
+        function splitText(element) {
+            const text = element.innerText; element.innerHTML = '';
+            text.split('').forEach(char => {
+                if(char === ' ' || char === '\n') element.innerHTML += char;
+                else {
+                    const span = document.createElement('span');
+                    span.classList.add('char-wrap');
+                    span.innerHTML = `<span class="char">${char}</span>`;
+                    element.appendChild(span);
+                }
+            });
+        }
+        document.querySelectorAll('.split-text').forEach(el => splitText(el));
+
+        // 2. MAIN
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger, Draggable);
+
+            // ANIMATIONS
+            const tl = gsap.timeline();
+
+            // Hero
+            gsap.set(".split-text .char", { y: "100%" });
+            gsap.set(".fade-in", { y: 20, opacity: 0 });
+            gsap.set(".reveal-img", { scale: 1.2 });
+
+            tl.to(".split-text .char", { y: "0%", duration: 1, stagger: 0.05, ease: "power4.out" })
+              .to(".fade-in", { opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: "power2.out" }, "-=0.5")
+              .to(".reveal-img", { scale: 1, duration: 1.5, ease: "power2.out" }, "-=1.5");
+
+            // Draggable Carousel
+            document.querySelectorAll('.carousel-track').forEach(track => {
+                const totalWidth = track.scrollWidth - track.parentElement.offsetWidth;
+                Draggable.create(track, {
+                    type: "x",
+                    bounds: { minX: -totalWidth, maxX: 0 },
+                    inertia: true,
+                    edgeResistance: 0.65,
+                    dragClickables: true
+                });
+            });
+
+            // Reveal on Scroll
+            gsap.utils.toArray('.reveal-wrapper').forEach(wrapper => {
+                gsap.fromTo(wrapper.querySelector('img'),
+                    { scale: 1.2 },
+                    {
+                        scale: 1,
+                        scrollTrigger: {
+                            trigger: wrapper,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: true
+                        }
+                    }
+                );
+            });
+
+            // Nav Scroll Effect - always keep text black
+            const nav = document.getElementById('nav');
+            window.addEventListener('scroll', () => {
+                if(window.scrollY > 100) {
+                    nav.classList.add('bg-white', 'border-b', 'border-gray-200');
+                } else {
+                    nav.classList.remove('bg-white', 'border-b', 'border-gray-200');
+                }
+            });
+
+            // Cursor
+            const cursorWrapper = document.getElementById('cursor-wrapper');
+            const cursor = document.getElementById('cursor');
+            const xTo = gsap.quickTo(cursorWrapper, "x", {duration: 0.1, ease: "power3"});
+            const yTo = gsap.quickTo(cursorWrapper, "y", {duration: 0.1, ease: "power3"});
+            window.addEventListener('mousemove', e => {
+                xTo(e.clientX);
+                yTo(e.clientY);
+                cursor.classList.add('visible');
+            });
+            window.addEventListener('mouseleave', () => {
+                cursor.classList.remove('visible');
+            });
+            document.querySelectorAll('.hover-trigger').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | Bines & Chalk</title>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-black': '#0a0a0a',
+                        'brand-red': '#cc0000',
+                        'brand-bone': '#ecebe6',
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                        mono: ['Courier New', 'Courier', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CORE */
+        *, *::before, *::after {
+            cursor: none !important;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #000;
+            overflow-x: hidden;
+        }
+
+        /* CUSTOM CURSOR - BULLET */
+        #cursor-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            z-index: 99999;
+            will-change: transform;
+        }
+        #cursor {
+            position: absolute;
+            width: 30px;
+            height: 12px;
+            background: linear-gradient(90deg, #cc0000 0%, #cc0000 60%, #d4a574 60%, #d4a574 100%);
+            border-radius: 6px 3px 3px 6px;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.4);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        #cursor::before {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 8px;
+            background: #b8956e;
+            border-radius: 0 2px 2px 0;
+        }
+        #cursor.visible {
+            opacity: 1;
+        }
+        #cursor.hovered {
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        /* FORM STYLES */
+        .input-group { position: relative; margin-bottom: 2rem; overflow: hidden; }
+        .input-field {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem 0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.125rem;
+            color: #0a0a0a;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .input-field:focus { border-bottom-color: #0a0a0a; }
+        .input-label {
+            position: absolute; top: 1rem; left: 0;
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #999;
+            pointer-events: none;
+            transition: 0.3s ease all;
+        }
+        .input-field:focus ~ .input-label,
+        .input-field:valid ~ .input-label {
+            top: -10px; font-size: 0.65rem; color: #cc0000;
+        }
+
+        /* ANIMATION UTILS */
+        .reveal-text { opacity: 0; transform: translateY(20px); }
+    </style>
+</head>
+<body>
+
+    <!-- CURSOR -->
+    <div id="cursor-wrapper">
+        <div id="cursor"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-6 mix-blend-difference text-white transition-all duration-300 pointer-events-none">
+        <div class="pointer-events-auto relative group">
+            <div class="hover-trigger uppercase font-bold tracking-[0.2em] text-xs cursor-pointer">Menu</div>
+            <div class="absolute left-0 top-full mt-4 bg-brand-black border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[200px] z-50 mix-blend-normal">
+                <a href="index.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Home</a>
+                <a href="products.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Store</a>
+                <a href="contact.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Contact</a>
+            </div>
+        </div>
+        <div class="pointer-events-auto">
+            <a href="index.html" class="hover-trigger font-display text-2xl font-bold uppercase tracking-tighter cursor-pointer">Bines & Chalk</a>
+        </div>
+        <div class="pointer-events-auto">
+            <div class="hover-trigger uppercase font-bold tracking-[0.2em] text-xs cursor-pointer">Cart (0)</div>
+        </div>
+    </nav>
+
+    <!-- MAIN SPLIT LAYOUT -->
+    <main class="flex flex-col lg:flex-row min-h-screen">
+
+        <!-- LEFT COL: INFO (Dark) -->
+        <div class="w-full lg:w-1/2 bg-brand-black text-brand-bone p-8 lg:p-20 flex flex-col justify-between min-h-[50vh] lg:min-h-screen border-r border-white/10 relative overflow-hidden">
+
+            <!-- Background Image -->
+            <div class="absolute inset-0 opacity-20">
+                <img src="lace.png" class="w-full h-full object-cover" alt="Background">
+            </div>
+
+            <!-- Background Texture/Text -->
+            <div class="absolute -right-20 top-1/2 -translate-y-1/2 font-display text-[40vh] leading-none text-white/5 select-none pointer-events-none whitespace-nowrap rotate-90 lg:rotate-0">
+                CONTACT
+            </div>
+
+            <div class="relative z-10 mt-20 lg:mt-0">
+                <h1 class="font-display text-[15vw] lg:text-[8vw] leading-[0.8] uppercase tracking-tighter mb-12 reveal-text">
+                    No<br>Hiding.
+                </h1>
+
+                <div class="font-mono text-sm space-y-12 max-w-md">
+                    <div class="reveal-text delay-100">
+                        <h3 class="text-brand-red uppercase mb-4 tracking-widest text-xs font-bold">Headquarters</h3>
+                        <p class="leading-relaxed text-gray-400">
+                            East London
+                        </p>
+                    </div>
+
+                    <div class="reveal-text delay-200">
+                        <h3 class="text-brand-red uppercase mb-4 tracking-widest text-xs font-bold">Direct Line</h3>
+                        <ul class="space-y-2 text-gray-400">
+                            <li><a href="mailto:logosbola@gmail.com" class="hover:text-white transition-colors hover-trigger">logosbola@gmail.com</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="reveal-text delay-300">
+                         <h3 class="text-brand-red uppercase mb-4 tracking-widest text-xs font-bold">Social</h3>
+                         <div class="flex gap-6 uppercase text-xs font-bold tracking-widest">
+                             <a href="#" class="hover:text-brand-red transition-colors hover-trigger">Instagram</a>
+                             <a href="#" class="hover:text-brand-red transition-colors hover-trigger">Twitter/X</a>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative z-10 mt-12 lg:mt-0 reveal-text delay-500">
+                <p class="font-mono text-[10px] uppercase text-gray-600">
+                    Est. 2025 — London Underground
+                </p>
+            </div>
+        </div>
+
+        <!-- RIGHT COL: FORM (Light) -->
+        <div class="w-full lg:w-1/2 bg-white text-brand-black p-8 lg:p-24 flex flex-col justify-center relative">
+
+            <div class="max-w-xl w-full mx-auto">
+                <h2 class="font-display text-4xl uppercase mb-2 reveal-text">Drop a Message</h2>
+                <p class="font-mono text-xs text-gray-500 mb-12 uppercase tracking-wide reveal-text">Customer Service / Wholesale / Press</p>
+
+                <form class="space-y-8">
+
+                    <div class="input-group reveal-text">
+                        <input type="text" class="input-field" required>
+                        <label class="input-label">Full Name</label>
+                    </div>
+
+                    <div class="input-group reveal-text">
+                        <input type="email" class="input-field" required>
+                        <label class="input-label">Email Address</label>
+                    </div>
+
+                    <div class="input-group reveal-text">
+                        <input type="text" class="input-field">
+                        <label class="input-label">Order Number (Optional)</label>
+                    </div>
+
+                    <div class="input-group reveal-text">
+                        <textarea class="input-field h-32 resize-none" required></textarea>
+                        <label class="input-label">Message</label>
+                    </div>
+
+                    <div class="pt-8 reveal-text">
+                        <button type="button" class="group relative px-8 py-4 bg-black text-white overflow-hidden w-full lg:w-auto hover-trigger">
+                            <div class="absolute inset-0 w-full h-full bg-brand-red translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+                            <span class="relative font-mono text-xs font-bold uppercase tracking-[0.2em] group-hover:text-white transition-colors">Send</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Decorative Grid Lines -->
+            <div class="absolute left-0 top-0 bottom-0 w-[1px] bg-gray-100 hidden lg:block"></div>
+            <div class="absolute right-12 top-0 bottom-0 w-[1px] bg-gray-100 hidden lg:block"></div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-black text-brand-bone py-16 text-center">
+        <div class="font-display text-4xl font-bold uppercase tracking-tighter mb-4">Bines & Chalk</div>
+        <div class="text-xs uppercase tracking-[0.5em] text-gray-500">
+            © 2025 Bines & Chalk
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        // CURSOR
+        const cursorWrapper = document.getElementById('cursor-wrapper');
+        const cursor = document.getElementById('cursor');
+
+        // Mouse Move
+        window.addEventListener('mousemove', e => {
+            gsap.to(cursorWrapper, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1,
+                ease: "power2.out"
+            });
+            cursor.classList.add('visible');
+        });
+
+        window.addEventListener('mouseleave', () => {
+            cursor.classList.remove('visible');
+        });
+
+        // Hover Effects
+        document.querySelectorAll('.hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // Animations on Load
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.to(".reveal-text", {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                stagger: 0.1,
+                ease: "power3.out",
+                delay: 0.2
+            });
+        });
+    </script>
+
+</body>
+</html>

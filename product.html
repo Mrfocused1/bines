@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Lengman Jacket | Bines & Chalk</title>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-black': '#0a0a0a',
+                        'brand-red': '#cc0000',
+                        'brand-bone': '#ecebe6',
+                        'brand-gray': '#f4f4f4',
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* --- CRITICAL CSS FALLBACKS (Works without Tailwind) --- */
+        body {
+            margin: 0; padding: 0;
+            background-color: #ffffff;
+            color: #0a0a0a;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Grid Layout */
+        .page-grid { display: flex; flex-direction: column; }
+        @media (min-width: 1024px) {
+            .page-grid { flex-direction: row; }
+            .col-left { width: 60%; border-right: 1px solid #eee; }
+            .col-right { width: 40%; }
+            .sticky-wrap { position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        }
+
+        /* Nav */
+        .nav-bar {
+            position: fixed; top: 0; width: 100%; z-index: 50;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5rem 2rem; box-sizing: border-box;
+            mix-blend-mode: exclusion; color: white;
+        }
+
+        /* Images */
+        .reveal-wrapper {
+            position: relative; overflow: hidden; background: #f0f0f0;
+            width: 100%; display: block;
+        }
+        /* Fallback aspect ratio if Tailwind fails */
+        .aspect-tall { aspect-ratio: 3/4; }
+        .reveal-img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            /* Visible by default! GSAP will handle hiding if it loads */
+            opacity: 1;
+        }
+
+        /* Typography & UI */
+        h1, h2, h3 { font-family: 'Oswald', sans-serif; margin: 0; text-transform: uppercase; }
+        button { cursor: pointer; }
+
+        /* Accordion */
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease;
+        }
+        .accordion-item.active .accordion-content { max-height: 300px; }
+        .accordion-icon { transition: transform 0.3s ease; display: inline-block; }
+        .accordion-item.active .accordion-icon { transform: rotate(45deg); }
+
+        /* Size Selector */
+        .size-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
+        .size-btn {
+            height: 3rem; border: 1px solid #e5e5e5; background: white;
+            font-weight: bold; transition: all 0.2s;
+        }
+        .size-btn:hover { border-color: black; }
+        .size-btn.selected { background: black; color: white; border-color: black; }
+
+        /* Custom Cursor */
+        #cursor-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            z-index: 99999;
+            will-change: transform;
+        }
+        #cursor {
+            position: absolute;
+            width: 30px;
+            height: 12px;
+            background: linear-gradient(90deg, #cc0000 0%, #cc0000 60%, #d4a574 60%, #d4a574 100%);
+            border-radius: 6px 3px 3px 6px;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.4);
+        }
+        @media (pointer: fine) {
+            #cursor { opacity: 1; }
+        }
+        #cursor.hovered {
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div id="cursor-wrapper">
+        <div id="cursor"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav-bar" id="nav">
+        <a href="products.html" class="hover-trigger uppercase font-bold tracking-widest text-xs cursor-pointer flex items-center gap-2" style="text-decoration: none; color: inherit;">
+            <span>←</span> Back
+        </a>
+        <a href="index.html" class="hover-trigger text-2xl font-bold uppercase tracking-tighter cursor-pointer" style="text-decoration: none; color: inherit; font-family: 'Oswald', sans-serif;">Bines & Chalk</a>
+        <div class="hover-trigger uppercase font-bold tracking-widest text-xs cursor-pointer">Cart (0)</div>
+    </nav>
+
+    <main class="page-grid min-h-screen pt-24 lg:pt-0">
+
+        <!-- LEFT: GALLERY -->
+        <div class="col-left flex flex-col">
+            <!-- Main Hero Image -->
+            <div class="w-full h-[80vh] lg:h-screen reveal-wrapper relative group">
+                 <img src="hoodie.png" class="reveal-img sticky top-0" alt="Main View">
+                 <div class="absolute bottom-6 left-6 bg-white px-3 py-1 text-xs font-bold uppercase tracking-widest">Front View</div>
+            </div>
+
+            <!-- Grid of Details -->
+            <div class="grid grid-cols-1 h-auto">
+                <div class="reveal-wrapper aspect-tall border-gray-100">
+                    <img src="hoodie Back.png" class="reveal-img" alt="Back Detail">
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: BUYING INFO -->
+        <div class="col-right bg-white relative">
+            <div class="sticky-wrap flex flex-col p-8 lg:p-16 no-scrollbar">
+
+                <!-- Header -->
+                <div class="mb-8 border-b border-black pb-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h1 class="text-5xl lg:text-7xl uppercase leading-[0.9] tracking-tight font-display">The Lengman<br>Jacket</h1>
+                    </div>
+                    <div class="flex justify-between items-end mt-4">
+                        <span class="text-sm uppercase tracking-widest text-gray-500">Olive Drab / Core Collection</span>
+                        <span class="text-2xl font-bold font-display">£153.00</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="text-sm leading-relaxed text-gray-800 mb-10">
+                    <p>A Bines & Chalk signature. The Lengman Jacket is engineered for the concrete environment. Cut from 14oz heavyweight canvas that softens with wear but never loses its edge. Features matte black hardware, reinforced elbow patches, and a concealed internal stash pocket.</p>
+                </div>
+
+                <!-- Size Selector -->
+                <div class="mb-10">
+                    <div class="flex justify-between text-xs font-bold uppercase tracking-widest mb-4">
+                        <span>Size</span>
+                        <span class="underline cursor-pointer hover:text-brand-red">Size Guide</span>
+                    </div>
+                    <div class="size-grid">
+                        <button class="size-btn hover-trigger">S</button>
+                        <button class="size-btn hover-trigger">M</button>
+                        <button class="size-btn hover-trigger selected">L</button>
+                        <button class="size-btn hover-trigger">XL</button>
+                        <button class="size-btn hover-trigger">XXL</button>
+                    </div>
+                </div>
+
+                <!-- Add to Cart -->
+                <button class="w-full bg-brand-red text-white h-16 uppercase font-bold tracking-[0.2em] hover:bg-brand-black transition-colors duration-300 mb-12 hover-trigger">
+                    Add to Cart
+                </button>
+
+                <!-- Accordions -->
+                <div class="border-t border-gray-200">
+                    <div class="accordion-item border-b border-gray-200 py-6 cursor-pointer hover-trigger">
+                        <div class="flex justify-between items-center">
+                            <span class="uppercase text-lg font-display">Fabrication</span>
+                            <span class="accordion-icon text-2xl">+</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p class="pt-4 text-xs leading-relaxed text-gray-500 uppercase tracking-wide">
+                                Body: 100% Cotton Canvas (14oz)<br>
+                                Lining: Quilted Polyester<br>
+                                Hardware: Zinc Alloy (Matte Black)<br>
+                                Origin: Crafted in Portugal
+                            </p>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-b border-gray-200 py-6 cursor-pointer hover-trigger">
+                        <div class="flex justify-between items-center">
+                            <span class="uppercase text-lg font-display">Delivery & Returns</span>
+                            <span class="accordion-icon text-2xl">+</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p class="pt-4 text-xs leading-relaxed text-gray-500 uppercase tracking-wide">
+                                UK Next Day Delivery: £5.00 (Free over £200)<br>
+                                International: Calculated at checkout.<br>
+                                Returns accepted within 14 days of receipt.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- OTHER ITEMS -->
+    <section class="py-24 px-8 border-t border-gray-200 bg-brand-gray">
+        <h2 class="text-3xl uppercase mb-12 font-display">Other Items</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <!-- Shower Tee -->
+            <div class="group cursor-pointer hover-trigger">
+                <div class="reveal-wrapper aspect-tall mb-4 bg-white">
+                    <img src="Bines_and_Chalk_T_Shirt_Back_View.png" class="reveal-img" alt="Shower Tee">
+                </div>
+                <h3 class="text-sm uppercase font-display">Shower Tee</h3>
+                <span class="text-xs font-bold text-gray-500">£45.00</span>
+            </div>
+            <!-- Shower Hoodie -->
+            <div class="group cursor-pointer hover-trigger">
+                <div class="reveal-wrapper aspect-tall mb-4 bg-white">
+                    <img src="Bines_and_Chalk_Hoodie_Front_View.png" class="reveal-img" alt="Shower Hoodie">
+                </div>
+                <h3 class="text-sm uppercase font-display">Shower Hoodie</h3>
+                <span class="text-xs font-bold text-gray-500">£95.00</span>
+            </div>
+            <!-- Classic Tee -->
+            <div class="group cursor-pointer hover-trigger">
+                <div class="reveal-wrapper aspect-tall mb-4 bg-white">
+                    <img src="Bines_and_Chalk_T_Shirt_Front_View.png" class="reveal-img" alt="Classic Tee">
+                </div>
+                <h3 class="text-sm uppercase font-display">Classic Tee</h3>
+                <span class="text-xs font-bold text-gray-500">£45.00</span>
+            </div>
+            <!-- Slew Dem Hoodie -->
+            <div class="group cursor-pointer hover-trigger">
+                <div class="reveal-wrapper aspect-tall mb-4 bg-white">
+                    <img src="Bines_and_Chalk_Hoodie_Back_View.png" class="reveal-img" alt="Slew Dem Hoodie">
+                </div>
+                <h3 class="text-sm uppercase font-display">Slew Dem Hoodie</h3>
+                <span class="text-xs font-bold text-gray-500">£95.00</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-black text-brand-bone py-16 text-center">
+        <div class="font-display text-4xl font-bold uppercase tracking-tighter mb-4">Bines & Chalk</div>
+        <div class="text-xs uppercase tracking-[0.5em] text-gray-500">
+            © 2025 Bines & Chalk
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Check if GSAP loaded
+            if (typeof gsap !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                try {
+                    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+                    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+                    requestAnimationFrame(raf);
+                } catch(e) {
+                    console.log("Lenis not available, using native scroll");
+                }
+
+                // ANIMATE IMAGES IN
+                const images = document.querySelectorAll('.reveal-img');
+                gsap.from(images, {
+                    opacity: 0,
+                    scale: 1.2,
+                    duration: 1.5,
+                    stagger: 0.1,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: "body",
+                        start: "top bottom"
+                    }
+                });
+
+                // CURSOR
+                const cursorWrapper = document.getElementById('cursor-wrapper');
+                const cursor = document.getElementById('cursor');
+
+                if (cursorWrapper && cursor) {
+                    const xTo = gsap.quickTo(cursorWrapper, "x", { duration: 0.15, ease: "power2.out" });
+                    const yTo = gsap.quickTo(cursorWrapper, "y", { duration: 0.15, ease: "power2.out" });
+
+                    window.addEventListener('mousemove', e => {
+                        xTo(e.clientX);
+                        yTo(e.clientY);
+                    });
+
+                    document.querySelectorAll('.hover-trigger').forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                    });
+                }
+            }
+
+            // ACCORDION (Vanilla JS - Works without GSAP)
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.accordion-item').forEach(i => {
+                        if(i !== item) i.classList.remove('active');
+                    });
+                    item.classList.toggle('active');
+                });
+            });
+
+            // SIZE SELECTION (Vanilla JS)
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

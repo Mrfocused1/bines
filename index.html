@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BINES & CHALK | Est. 2025</title>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-black': '#0a0a0a',
+                        'brand-bone': '#ecebe6',
+                        'brand-red': '#cc0000',
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    fontSize: {
+                        'huge': '18vw',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CORE STYLES */
+        *, *::before, *::after {
+            cursor: none !important;
+        }
+        body {
+            background-color: #0a0a0a;
+            color: #ecebe6;
+            overflow-x: hidden;
+            opacity: 1; /* Force visible by default */
+        }
+
+        /* CUSTOM CURSOR - BULLET */
+        #cursor-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            z-index: 99999;
+            will-change: transform;
+        }
+        #cursor {
+            position: absolute;
+            width: 30px;
+            height: 12px;
+            background: linear-gradient(90deg, #cc0000 0%, #cc0000 60%, #d4a574 60%, #d4a574 100%);
+            border-radius: 6px 3px 3px 6px;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.4);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        #cursor::before {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 8px;
+            background: #b8956e;
+            border-radius: 0 2px 2px 0;
+        }
+        #cursor.visible {
+            opacity: 1;
+        }
+        #cursor.hovered {
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        /* TEXT ANIMATION UTILS */
+        .char-wrap {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .char {
+            display: inline-block;
+            /* Default visible in case JS fails, JS will hide them */
+            transform: translateY(0);
+        }
+
+        /* IMAGE REVEAL MASKS */
+        .reveal-wrapper {
+            position: relative;
+            overflow: hidden;
+            background-color: #1a1a1a;
+        }
+        .reveal-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            /* Default visible */
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 3D CARD STYLES */
+        .product-card {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+        .card-inner {
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+        }
+        .card-content {
+            transform: translateZ(30px);
+        }
+
+        /* MARQUEE */
+        .marquee-track {
+            display: flex;
+            white-space: nowrap;
+            will-change: transform;
+        }
+
+        /* LOADER */
+        .loader-overlay {
+            position: fixed; inset: 0;
+            background: #ecebe6;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform-origin: top;
+            /* Ensure it can be hidden via CSS class */
+            transition: transform 0.8s ease-in-out;
+        }
+        .loader-overlay.hidden-force {
+            transform: translateY(-100%) !important;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div id="cursor-wrapper">
+        <div id="cursor"></div>
+    </div>
+
+    <!-- LOADER -->
+    <div class="loader-overlay" id="loader">
+        <h1 class="font-display text-6xl text-brand-black uppercase tracking-tighter" id="loader-text">Bines & Chalk</h1>
+        <div class="w-64 h-1 bg-gray-300 mt-4 overflow-hidden">
+            <div class="h-full bg-brand-black w-0" id="loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-6 mix-blend-difference text-[#ecebe6]">
+        <div class="relative group">
+            <div class="hover-trigger uppercase font-bold tracking-[0.2em] text-xs cursor-pointer">Menu</div>
+            <div class="absolute left-0 top-full mt-4 bg-brand-black border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[200px] z-50">
+                <a href="index.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Home</a>
+                <a href="products.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Store</a>
+                <a href="contact.html" class="block px-6 py-3 text-xs uppercase tracking-widest font-bold text-brand-bone hover:bg-brand-bone hover:text-brand-black transition-colors hover-trigger">Contact</a>
+            </div>
+        </div>
+        <a href="index.html" class="hover-trigger font-display text-3xl font-bold uppercase tracking-tighter cursor-pointer">Bines & Chalk</a>
+        <div class="hover-trigger uppercase font-bold tracking-[0.2em] text-xs cursor-pointer">Cart (0)</div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+        <!-- HERO SECTION -->
+        <section class="relative h-screen flex flex-col items-center justify-center overflow-hidden" data-bg="#0a0a0a" data-text="#ecebe6">
+            <!-- Background Parallax Image -->
+            <div class="absolute inset-0 opacity-40">
+                <img src="Bines_and_Chalk_High_Angle_Contemplative.png" class="w-full h-full object-cover reveal-img hero-img" alt="Hero">
+            </div>
+
+
+            <div class="absolute bottom-12 uppercase tracking-widest text-xs font-bold flex gap-4 opacity-1 hero-meta">
+                <span>London Underground</span>
+                <span class="text-brand-red">//</span>
+                <span>Est. 2025</span>
+            </div>
+        </section>
+
+        <!-- MANIFESTO -->
+        <section class="py-32 px-6 md:px-20 bg-brand-bone text-brand-black" data-bg="#ecebe6" data-text="#0a0a0a">
+            <div class="max-w-6xl mx-auto">
+                <p class="font-display text-5xl md:text-7xl leading-[0.9] uppercase split-animate">
+                    We do not ask for permission. We take up space. Authentic London grit tailored for the modern purist.
+                </p>
+            </div>
+        </section>
+
+        <!-- MARQUEE -->
+        <div class="bg-brand-black text-white py-4 overflow-hidden border-y border-white/20">
+            <div class="marquee-track font-display text-8xl uppercase tracking-tighter">
+                <span class="mx-8">Rise of the Lengman</span>
+                <span class="mx-8 opacity-50">///</span>
+                <span class="mx-8">Deepest Darkest</span>
+                <span class="mx-8 opacity-50">///</span>
+                <span class="mx-8">Rise of the Lengman</span>
+                <span class="mx-8 opacity-50">///</span>
+                <span class="mx-8">Deepest Darkest</span>
+                <span class="mx-8 opacity-50">///</span>
+            </div>
+        </div>
+
+        <!-- PRODUCT GALLERY (Grid) -->
+        <section class="py-32 px-6 bg-brand-bone text-brand-black" data-bg="#ecebe6" data-text="#0a0a0a">
+            <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-16">
+
+                <!-- Product 1 -->
+                <a href="product.html" class="product-card group cursor-pointer hover-trigger block">
+                    <div class="card-inner relative">
+                        <div class="reveal-wrapper aspect-[3/4] mb-4 border border-black/10 relative overflow-hidden">
+                            <img src="hoodie.png" class="product-img-front absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0" alt="Hoodie Front">
+                            <img src="hoodie Back.png" class="product-img-back absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0 group-hover:opacity-100" alt="Hoodie Back">
+                        </div>
+                        <div class="card-content flex justify-between items-start border-t border-black pt-4">
+                            <div>
+                                <h3 class="font-display text-lg md:text-3xl uppercase leading-none">Slew Dem Hoodie</h3>
+                                <p class="font-sans text-xs uppercase tracking-widest mt-1 text-gray-500">Vintage Wash</p>
+                            </div>
+                            <span class="font-bold">£95</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Product 2 -->
+                <a href="product-glasses.html" class="product-card group cursor-pointer hover-trigger lg:mt-24 block">
+                    <div class="card-inner relative">
+                        <div class="reveal-wrapper aspect-[3/4] mb-4 border border-black/10 relative overflow-hidden">
+                            <img src="glasses.png" class="product-img-front absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0" alt="Glasses Front">
+                            <img src="Generated Image December 01, 2025 - 5_16PM.png" class="product-img-back absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0 group-hover:opacity-100" alt="Glasses Back">
+                        </div>
+                        <div class="card-content flex justify-between items-start border-t border-black pt-4">
+                            <div>
+                                <h3 class="font-display text-lg md:text-3xl uppercase leading-none">Slew Dem Glasses</h3>
+                                <p class="font-sans text-xs uppercase tracking-widest mt-1 text-gray-500">Polarized</p>
+                            </div>
+                            <span class="font-bold">£85</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Product 3 -->
+                <a href="product-tee.html" class="product-card group cursor-pointer hover-trigger block">
+                    <div class="card-inner relative">
+                        <div class="reveal-wrapper aspect-[3/4] mb-4 border border-black/10 relative overflow-hidden">
+                            <img src="back view.png" class="absolute inset-0 w-full h-full object-cover" alt="Slew Dem Tee">
+                        </div>
+                        <div class="card-content flex justify-between items-start border-t border-black pt-4">
+                            <div>
+                                <h3 class="font-display text-lg md:text-3xl uppercase leading-none">Slew Dem Tee</h3>
+                                <p class="font-sans text-xs uppercase tracking-widest mt-1 text-gray-500">Vintage Wash</p>
+                            </div>
+                            <span class="font-bold">£45</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- BANNER -->
+        <section class="relative h-[60vh] overflow-hidden">
+            <img src="Bines_and_Chalk_Kangaroo_Pocket_Logo_Closeup.png" class="w-full h-full object-cover object-center lg:object-top" alt="Banner">
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <div class="text-center text-white px-6">
+                    <h2 class="font-display text-5xl md:text-7xl lg:text-8xl uppercase tracking-tighter mb-6">Quality Crafted</h2>
+                    <p class="text-sm md:text-base uppercase tracking-[0.3em] mb-8 text-white/80">Premium Streetwear from East London</p>
+                    <a href="products.html" class="inline-block border-2 border-white px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-white hover:text-black transition-colors duration-300 hover-trigger">Shop Now</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-brand-black text-brand-bone py-24 text-center overflow-hidden">
+            <h2 class="font-display text-[25vw] leading-[0.7] tracking-tighter opacity-20 hover:opacity-100 transition-opacity duration-500 cursor-default select-none">
+                CHRONIK
+            </h2>
+            <div class="mt-12 text-xs uppercase tracking-[0.5em] text-gray-500">
+                © 2025 Bines & Chalk
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- LIBRARIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+
+    <script>
+        // --- 0. SAFETY VALVE: Force remove loader after 3.5s no matter what ---
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            if(loader) {
+                loader.classList.add('hidden-force');
+                console.log("Safety valve triggered: Loader removed forcefully.");
+            }
+        }, 3500);
+
+        // --- 1. HELPERS ---
+        function splitText(element) {
+            const text = element.innerText;
+            element.innerHTML = '';
+            text.split('').forEach(char => {
+                if (char === ' ') {
+                    element.innerHTML += ' ';
+                } else {
+                    const span = document.createElement('span');
+                    span.classList.add('char-wrap');
+                    span.innerHTML = `<span class="char">${char}</span>`;
+                    element.appendChild(span);
+                }
+            });
+        }
+
+        // Hero title removed
+
+        // --- 2. MAIN LOGIC (Wrapped in DOMContentLoaded) ---
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Check if GSAP loaded
+            if (typeof gsap !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Initialize Lenis Smooth Scroll (optional - graceful fallback)
+                try {
+                    if (typeof Lenis !== 'undefined') {
+                        const lenis = new Lenis({
+                            duration: 1.2,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                            smooth: true
+                        });
+                        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+                        requestAnimationFrame(raf);
+                    }
+                } catch (e) {
+                    console.log('Lenis not available, using native scroll');
+                }
+
+                // --- INTRO TIMELINE ---
+                const tl = gsap.timeline();
+
+                // Prepare elements (hide them via JS so they are visible if JS fails)
+                gsap.set(".reveal-img", { scale: 1.4, opacity: 0 });
+
+                // 1. Fill loading bar
+                tl.to("#loader-bar", {
+                    width: "100%",
+                    duration: 1.5,
+                    ease: "power2.inOut"
+                })
+                // 2. Hide Loader
+                .to(".loader-overlay", {
+                    yPercent: -100,
+                    duration: 1,
+                    ease: "expo.inOut"
+                })
+                // 3. Reveal Hero Image
+                .to(".hero-img", {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 1.5,
+                    ease: "power2.out"
+                }, "-=0.5");
+
+                // --- SCROLL TRIGGERS ---
+
+                // Background Color Switching
+                document.querySelectorAll('[data-bg]').forEach(section => {
+                    ScrollTrigger.create({
+                        trigger: section,
+                        start: "top 50%",
+                        end: "bottom 50%",
+                        onEnter: () => gsap.to("body", { backgroundColor: section.dataset.bg, color: section.dataset.text }),
+                        onEnterBack: () => gsap.to("body", { backgroundColor: section.dataset.bg, color: section.dataset.text })
+                    });
+                });
+
+                // Image Reveals
+                document.querySelectorAll('.reveal-img').forEach(img => {
+                    if(!img.classList.contains('hero-img')) {
+                        gsap.to(img, {
+                            scrollTrigger: {
+                                trigger: img.parentElement,
+                                start: "top 80%",
+                            },
+                            opacity: 1,
+                            scale: 1,
+                            duration: 1.2,
+                            ease: "power3.out"
+                        });
+                    }
+                });
+
+                // Marquee
+                gsap.to(".marquee-track", {
+                    xPercent: -50,
+                    ease: "none",
+                    duration: 10,
+                    repeat: -1
+                });
+
+                // 3D Tilt
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = ((y - centerY) / centerY) * -15;
+                        const rotateY = ((x - centerX) / centerX) * 15;
+                        gsap.to(card.querySelector('.card-inner'), {
+                            rotateX: rotateX,
+                            rotateY: rotateY,
+                            duration: 0.1,
+                            ease: "none"
+                        });
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        gsap.to(card.querySelector('.card-inner'), {
+                            rotateX: 0,
+                            rotateY: 0,
+                            duration: 0.5,
+                            ease: "power2.out"
+                        });
+                    });
+                });
+
+                // Cursor
+                const cursorWrapper = document.getElementById('cursor-wrapper');
+                const cursor = document.getElementById('cursor');
+                const xTo = gsap.quickTo(cursorWrapper, "x", {duration: 0.1, ease: "power3"});
+                const yTo = gsap.quickTo(cursorWrapper, "y", {duration: 0.1, ease: "power3"});
+                window.addEventListener('mousemove', e => {
+                    xTo(e.clientX);
+                    yTo(e.clientY);
+                    cursor.classList.add('visible');
+                });
+                window.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('visible');
+                });
+                document.querySelectorAll('.hover-trigger').forEach(el => {
+                    el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                    el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                });
+
+            } else {
+                // Fallback if GSAP fails
+                document.getElementById('loader').classList.add('hidden-force');
+            }
+        });
+    </script>
+</body>
+</html>
