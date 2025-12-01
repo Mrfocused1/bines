@@ -92,7 +92,7 @@
         .size-btn:hover { border-color: black; }
         .size-btn.selected { background: black; color: white; border-color: black; }
 
-        /* Custom Cursor */
+        /* Custom Cursor (hidden on touch devices) */
         #cursor-wrapper {
             position: fixed;
             top: 0;
@@ -102,23 +102,29 @@
             pointer-events: none;
             z-index: 99999;
             will-change: transform;
+            display: none;
+        }
+        @media (pointer: fine) {
+            #cursor-wrapper {
+                display: block;
+            }
         }
         #cursor {
             position: absolute;
-            width: 30px;
-            height: 12px;
-            background: linear-gradient(90deg, #cc0000 0%, #cc0000 60%, #d4a574 60%, #d4a574 100%);
-            border-radius: 6px 3px 3px 6px;
-            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: url('bullet.png') no-repeat center center;
+            background-size: contain;
+            pointer-events: none;
+            transform: translate(-50%, -50%) rotate(-90deg);
             opacity: 0;
-            transition: opacity 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.4);
+            transition: opacity 0.2s;
         }
         @media (pointer: fine) {
             #cursor { opacity: 1; }
         }
         #cursor.hovered {
-            transform: translate(-50%, -50%) scale(1.5);
+            transform: translate(-50%, -50%) rotate(-90deg) scale(1.3);
         }
 
         /* Hide scrollbar */
@@ -315,22 +321,45 @@
                     }
                 });
 
-                // CURSOR
+                // CURSOR with direction tracking
                 const cursorWrapper = document.getElementById('cursor-wrapper');
                 const cursor = document.getElementById('cursor');
 
                 if (cursorWrapper && cursor) {
                     const xTo = gsap.quickTo(cursorWrapper, "x", { duration: 0.15, ease: "power2.out" });
                     const yTo = gsap.quickTo(cursorWrapper, "y", { duration: 0.15, ease: "power2.out" });
+                    let lastX = 0, lastY = 0;
+                    let isHovered = false;
 
                     window.addEventListener('mousemove', e => {
                         xTo(e.clientX);
                         yTo(e.clientY);
+
+                        const dx = e.clientX - lastX;
+                        const dy = e.clientY - lastY;
+                        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                            const angle = Math.atan2(dy, dx) * (180 / Math.PI) - 90;
+                            const scale = isHovered ? 1.3 : 1;
+                            gsap.to(cursor, {
+                                rotation: angle,
+                                scale: scale,
+                                duration: 0.15,
+                                ease: "power2.out"
+                            });
+                        }
+                        lastX = e.clientX;
+                        lastY = e.clientY;
                     });
 
                     document.querySelectorAll('.hover-trigger').forEach(el => {
-                        el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                        el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                        el.addEventListener('mouseenter', () => {
+                            isHovered = true;
+                            gsap.to(cursor, { scale: 1.3, duration: 0.2 });
+                        });
+                        el.addEventListener('mouseleave', () => {
+                            isHovered = false;
+                            gsap.to(cursor, { scale: 1, duration: 0.2 });
+                        });
                     });
                 }
             }

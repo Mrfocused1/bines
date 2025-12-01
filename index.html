@@ -35,8 +35,10 @@
 
     <style>
         /* CORE STYLES */
-        *, *::before, *::after {
-            cursor: none !important;
+        @media (pointer: fine) {
+            *, *::before, *::after {
+                cursor: none !important;
+            }
         }
         body {
             background-color: #0a0a0a;
@@ -45,7 +47,7 @@
             opacity: 1; /* Force visible by default */
         }
 
-        /* CUSTOM CURSOR - BULLET */
+        /* CUSTOM CURSOR - BULLET (hidden on touch devices) */
         #cursor-wrapper {
             position: fixed;
             top: 0;
@@ -55,35 +57,29 @@
             pointer-events: none;
             z-index: 99999;
             will-change: transform;
+            display: none;
+        }
+        @media (pointer: fine) {
+            #cursor-wrapper {
+                display: block;
+            }
         }
         #cursor {
             position: absolute;
-            width: 30px;
-            height: 12px;
-            background: linear-gradient(90deg, #cc0000 0%, #cc0000 60%, #d4a574 60%, #d4a574 100%);
-            border-radius: 6px 3px 3px 6px;
+            width: 40px;
+            height: 40px;
+            background: url('bullet.png') no-repeat center center;
+            background-size: contain;
             pointer-events: none;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) rotate(-90deg);
             opacity: 0;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.6), 0 0 0 2px rgba(0,0,0,0.4);
-            transition: opacity 0.2s, transform 0.2s;
-        }
-        #cursor::before {
-            content: '';
-            position: absolute;
-            right: -2px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 8px;
-            background: #b8956e;
-            border-radius: 0 2px 2px 0;
+            transition: opacity 0.2s;
         }
         #cursor.visible {
             opacity: 1;
         }
         #cursor.hovered {
-            transform: translate(-50%, -50%) scale(1.5);
+            transform: translate(-50%, -50%) rotate(-90deg) scale(1.3);
         }
 
         /* TEXT ANIMATION UTILS */
@@ -439,22 +435,49 @@
                     });
                 });
 
-                // Cursor
+                // Cursor with direction tracking
                 const cursorWrapper = document.getElementById('cursor-wrapper');
                 const cursor = document.getElementById('cursor');
                 const xTo = gsap.quickTo(cursorWrapper, "x", {duration: 0.1, ease: "power3"});
                 const yTo = gsap.quickTo(cursorWrapper, "y", {duration: 0.1, ease: "power3"});
+                let lastX = 0, lastY = 0;
+                let currentRotation = -90;
+                let isHovered = false;
+
                 window.addEventListener('mousemove', e => {
                     xTo(e.clientX);
                     yTo(e.clientY);
                     cursor.classList.add('visible');
+
+                    // Calculate direction and rotate bullet
+                    const dx = e.clientX - lastX;
+                    const dy = e.clientY - lastY;
+                    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                        const angle = Math.atan2(dy, dx) * (180 / Math.PI) - 90;
+                        currentRotation = angle;
+                        const scale = isHovered ? 1.3 : 1;
+                        gsap.to(cursor, {
+                            rotation: angle,
+                            scale: scale,
+                            duration: 0.15,
+                            ease: "power2.out"
+                        });
+                    }
+                    lastX = e.clientX;
+                    lastY = e.clientY;
                 });
                 window.addEventListener('mouseleave', () => {
                     cursor.classList.remove('visible');
                 });
                 document.querySelectorAll('.hover-trigger').forEach(el => {
-                    el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                    el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                    el.addEventListener('mouseenter', () => {
+                        isHovered = true;
+                        gsap.to(cursor, { scale: 1.3, duration: 0.2 });
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        isHovered = false;
+                        gsap.to(cursor, { scale: 1, duration: 0.2 });
+                    });
                 });
 
             } else {
